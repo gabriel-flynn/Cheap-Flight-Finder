@@ -1,0 +1,14 @@
+Spirit Airlines (we on a budget) ->
+
+We need an access token that to query the API, however it expires every 15 minutes
+The endpoint to get the token is:
+POST https://www.spirit.com/api/nk-token/api/v1/token
+Required args:
+    headers: -> ocp-acim-subscription-key (Azure thing)
+    body: {"applicationName": "dotRezWeb"}
+
+Endpoint to get flights:
+POST https://www.spirit.com/api/nk-availability/api/availability/lowfare
+Required args;
+    headers: -> ocp-acim-subscription-key (Azure thing)
+                auth token
