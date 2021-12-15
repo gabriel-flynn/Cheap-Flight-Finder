@@ -1,0 +1,12 @@
+{
+  "flights": [
+    {
+      "srcAirport": "DFW",
+      "destAirport": "LAS",
+      "numPassengers": 2,
+      "startWindow": "P1D",
+      "endWindow": "P7M"
+    }
+  ],
+  "saveToDynamo": true
+}
