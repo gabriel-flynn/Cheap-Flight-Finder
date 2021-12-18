@@ -1,0 +1,17 @@
+syntax = "proto3";
+package flights;
+
+option go_package = "github.com/gabriel-flynn/Cheap-Flight-Finder/server/grpc";
+
+
+message Empty {
+
+}
+
+message SouthwestHeadersResponse {
+  map<string, string> headers = 1;
+}
+
+service FlightScraper {
+  rpc GetSouthwestHeaders(Empty) returns (SouthwestHeadersResponse) {}
+}
