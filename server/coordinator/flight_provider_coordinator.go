@@ -28,29 +28,37 @@ func (f *flightProviderCoordinator) Start() {
 	var chans []chan []*models.OneWayFlight
 	flightProviders := []providers.FlightProvider{spirit.GetSpiritProvider()}
 
-	for _, provider := range flightProviders {
+	for indx, provider := range flightProviders {
 		c := make(chan []*models.OneWayFlight)
 		chans = append(chans, c)
 		flightSearchConfig := config.GetConfig()
-
 		var wg sync.WaitGroup
 		for _, f := range flightSearchConfig.FlightParameters {
 			wg.Add(2)
-			go func(f *config.FlightSearch) {
+			go func(f config.FlightSearch, wg *sync.WaitGroup, indx int, provider providers.FlightProvider) {
 				defer wg.Done()
-				provider.GetOneWayFlights(f.SrcAirport, f.DestAirport, f.StartWindow.Shift(time.Now()), f.EndWindow.Shift(time.Now()), f.NumPassengers, c)
-			}(&f)
+				if indx == 0 { //TODO: Implement way to check if an airport is available before calling this method
+					provider.GetOneWayFlights("DFW", f.DestAirport, f.StartWindow.Shift(time.Now()), f.EndWindow.Shift(time.Now()), f.NumPassengers, c)
+				} else {
+					provider.GetOneWayFlights(f.SrcAirport, f.DestAirport, f.StartWindow.Shift(time.Now()), f.EndWindow.Shift(time.Now()), f.NumPassengers, c)
+				}
+			}(f, &wg, indx, provider)
 
-			go func(f *config.FlightSearch) {
+			go func(f config.FlightSearch, wg *sync.WaitGroup, indx int, provider providers.FlightProvider) {
 				defer wg.Done()
-				provider.GetOneWayFlights(f.DestAirport, f.SrcAirport, f.StartWindow.Shift(time.Now()), f.EndWindow.Shift(time.Now()), f.NumPassengers, c)
-			}(&f)
+				if indx == 0 {
+					provider.GetOneWayFlights(f.DestAirport, "DFW", f.StartWindow.Shift(time.Now()), f.EndWindow.Shift(time.Now()), f.NumPassengers, c)
+
+				} else {
+					provider.GetOneWayFlights(f.DestAirport, f.SrcAirport, f.StartWindow.Shift(time.Now()), f.EndWindow.Shift(time.Now()), f.NumPassengers, c)
+				}
+			}(f, &wg, indx, provider)
 		}
 		//Wait for all one way flight requests to finish then close the channel
-		go func() {
+		go func(wg *sync.WaitGroup) {
 			wg.Wait()
 			close(c)
-		}()
+		}(&wg)
 	}
 
 	var wg sync.WaitGroup

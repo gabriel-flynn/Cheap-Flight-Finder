@@ -15,3 +15,10 @@
 # vendor/
 
 .idea/
+
+# Python
+__pycache__
+venv
+
+# Used by undetected-chrome
+tmp

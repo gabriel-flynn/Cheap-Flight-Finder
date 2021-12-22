@@ -13,7 +13,7 @@ import (
 )
 
 func main() {
-	config := config.LoadConfiguration("config.json")
+	flightConfig := config.LoadConfiguration("config.json")
 	c := make(chan []*models.OneWayFlight)
 
 	//Start querying endpoints for flights
@@ -38,7 +38,7 @@ func main() {
 				log.Fatal("Error while writing csv:", err)
 			}
 
-			if config.SaveToDynamo {
+			if flightConfig.SaveToDynamo {
 				//Save to dynamodb
 				wg.Add(1)
 				flightsCopy := make([]*models.OneWayFlight, len(flights))
@@ -55,7 +55,7 @@ func main() {
 	if len(flights) != 0 {
 		err := writer.WriteAll(models.BatchGetOneWayFlightRecord(flights))
 
-		if config.SaveToDynamo {
+		if flightConfig.SaveToDynamo {
 			//Save to dynamo
 			wg.Add(1)
 			copySlice := make([]*models.OneWayFlight, len(flights))
@@ -71,7 +71,7 @@ func main() {
 		flights = []*models.OneWayFlight{}
 	}
 	file.Close()
-	if config.SaveToDynamo {
+	if flightConfig.SaveToDynamo {
 		fmt.Print("Waiting for flights to save to DynamoDB")
 	}
 	wg.Wait()

@@ -1,4 +1,4 @@
-package spirit_config
+package spirit
 
 import "sync"
 
