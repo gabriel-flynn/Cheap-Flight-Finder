@@ -3,7 +3,6 @@ package spirit
 import (
 	"fmt"
 	"github.com/gabriel-flynn/Cheap-Flight-Finder/server/models"
-	config2 "github.com/gabriel-flynn/Cheap-Flight-Finder/server/providers/spirit/spirit_config"
 	"go.uber.org/ratelimit"
 	"log"
 	"strings"
@@ -101,7 +100,7 @@ func processFlights(trips []interface{}, numPassengers int) []*models.OneWayFlig
 	var flights []*models.OneWayFlight
 
 	for _, flight := range srcFlights {
-		srcFare, fareKey := getFare(flight.(map[string]interface{})["fares"].(map[string]interface{}), config2.FlightRequirements.IsSaversClub, numPassengers) //Get the standard fare, not the saver's club fare
+		srcFare, fareKey := getFare(flight.(map[string]interface{})["fares"].(map[string]interface{}), FlightRequirements.IsSaversClub, numPassengers) //Get the standard fare, not the saver's club fare
 
 		// If srcFare is nil then that means none of the fares met our requirements (ex: number of seats available)
 		if srcFare == nil {

@@ -3,9 +3,11 @@ module github.com/gabriel-flynn/Cheap-Flight-Finder
 go 1.17
 
 require (
+	github.com/avast/retry-go v3.0.0+incompatible
 	github.com/aws/aws-sdk-go v1.42.22
 	github.com/senseyeio/duration v0.0.0-20180430131211-7c2a214ada46
 	go.uber.org/ratelimit v0.2.0
+	golang.org/x/sync v0.0.0-20190423024810-112230192c58
 	google.golang.org/grpc v1.43.0
 	google.golang.org/protobuf v1.27.1
 )

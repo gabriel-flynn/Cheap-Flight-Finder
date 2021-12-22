@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/gabriel-flynn/Cheap-Flight-Finder/server/providers/spirit/spirit_config"
 	"io"
 	"io/ioutil"
 	"log"
@@ -30,8 +29,8 @@ func generateToken() (string, error) {
 		json.Unmarshal(bodyBytes, &x)
 
 		token := x["data"].(map[string]interface{})["token"].(string)
-		if spirit_config.ApiInfo == nil {
-			spirit_config.ApiInfo = &spirit_config.ApiConfig{AuthToken: token}
+		if ApiInfo == nil {
+			ApiInfo = &ApiConfig{AuthToken: token}
 		}
 
 		return token, nil

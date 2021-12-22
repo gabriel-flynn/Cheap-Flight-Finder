@@ -540,7 +540,7 @@ class Chrome(selenium.webdriver.chrome.webdriver.WebDriver):
         return object.__dir__(self)
 
     def get(self, url):
-
+        Chrome.delete_all_cookies(self)
         tabs = requests.get('http://{0}:{1}/json'.format(*self.options.debugger_address.split(':'))).json()
         for tab in tabs:
             if tab['type'] == 'page':

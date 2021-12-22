@@ -1,7 +1,9 @@
 import logging
+import threading
 import time
 from concurrent.futures import ThreadPoolExecutor
 import grpc
+from selenium import webdriver
 
 from flight_scraping_pb2 import SouthwestHeadersResponse
 from flight_scraping_pb2_grpc import FlightScraperServicer, add_FlightScraperServicer_to_server
@@ -13,6 +15,7 @@ import undetected_chromedriver_modified.v2 as uc
 
 headers = {}
 headers_last_fetched_at = None
+sem = threading.Semaphore()
 
 
 def get_headers(event_data):
@@ -23,8 +26,8 @@ def get_headers(event_data):
 
 
 def goToSouthwestWebsite():
-    vdisplay = Xvfb(width=800, height=1280)
-    vdisplay.start()
+    # vdisplay = Xvfb(width=800, height=1280)
+    # vdisplay.start()
 
     options = uc.ChromeOptions()
     options.add_argument(f'--no-first-run --no-service-autorun --password-store=basic')
@@ -38,41 +41,52 @@ def goToSouthwestWebsite():
         enable_cdp_events=True)
     driver.add_cdp_listener('Network.requestWillBeSent', get_headers)
     driver.get('https://mobile.southwest.com/air/booking/shopping')
+    time.sleep(15)
     try:
         element_present = EC.presence_of_element_located((By.CLASS_NAME, "form-field--placeholder"))
         WebDriverWait(driver, 60)
+        driver.execute_cdp_cmd('Network.setUserAgentOverride', {"userAgent":"Mozilla/5.0 (Linux; Android 12) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.104 Mobile Safari/537.36"})
+        action = webdriver.ActionChains(driver)
 
         from_btn = driver.find_element(By.CLASS_NAME, 'form-field--placeholder')
-        from_btn.click()
+        action.move_to_element(from_btn)
+        action.click().perform()
         time.sleep(2)
 
-        dal = driver.find_element(By.XPATH, "//span[contains(text(), '- DAL')]")
-        dal.click()
+        dal = driver.find_element(By.XPATH, "//span[contains(text(), '- ALB')]")
+        action.move_to_element(dal)
+        action.click().perform()
         time.sleep(3)
 
         to_btn = driver.find_element(By.XPATH, "//div[text()='To']")
-        to_btn.click()
+        action.move_to_element(to_btn)
+        action.click().perform()
 
         time.sleep(4)
-        las = driver.find_element(By.XPATH, "//span[contains(text(), '- LAS')]")
-        las.click()
+        las = driver.find_element(By.XPATH, "//span[contains(text(), '- ABQ')]")
+        action.move_to_element(las)
+        action.click().perform()
 
         submit = driver.find_element(By.XPATH, "//button[@type='submit']")
-        submit.click()
+        action.move_to_element(submit)
+        time.sleep(1)
+        action.click().perform()
         time.sleep(10)
 
     except Exception as e:
         print(f"Encounter error: {e}")
 
     driver.close()
-    vdisplay.stop()
+    # vdisplay.stop()
 
 
 class FlightScrapingServer(FlightScraperServicer):
     def GetSouthwestHeaders(self, request, context):
         # Only fetch new headers if it's been more than 5 minutes
-        if headers_last_fetched_at is None or time.time() - headers_last_fetched_at > 259:
-            goToSouthwestWebsite()
+        # if headers_last_fetched_at is None or time.time() - headers_last_fetched_at > 259:
+        sem.acquire()
+        goToSouthwestWebsite()
+        sem.release()
         resp = SouthwestHeadersResponse(headers=headers)
         return resp
 

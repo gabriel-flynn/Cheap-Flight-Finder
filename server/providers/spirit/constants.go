@@ -1,4 +1,4 @@
-package constants
+package spirit
 
 const GenerateTokenUrl = "https://www.spirit.com/api/nk-token/api/v1/token"
 const RefreshTokenUrl = "https://www.spirit.com/api/nk-token/api/nk/token"
