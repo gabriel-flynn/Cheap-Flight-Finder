@@ -16,7 +16,6 @@ import (
 
 type southwest struct {
 	rl               ratelimit.Limiter
-	quitTokenRefresh chan struct{}
 	sem              *semaphore.Weighted
 }
 
@@ -26,31 +25,15 @@ var doOnce sync.Once
 
 func GetSouthwestProvider() *southwest {
 
+	//TODO: revisit if using reusing auth headers works well for southwest. In the latest attempt we would use one set of auth headers per request which bottlenecks the our throughput quite heavily
 	doOnce.Do(func() {
-		//ticker := time.NewTicker(5 * time.Minute)
-		quit := make(chan struct{})
-		//refreshAuthHeaders()
-		//go func() {
-		//	for {
-		//		select {
-		//		case <-ticker.C:
-		//			go refreshAuthHeaders()
-		//		case <-quit:
-		//			ticker.Stop()
-		//			return
-		//		}
-		//	}
-		//}()
-
-		southwestSingleton = &southwest{rl: ratelimit.New(2), quitTokenRefresh: quit, sem: semaphore.NewWeighted(5)}
-
+		southwestSingleton = &southwest{rl: ratelimit.New(2), sem: semaphore.NewWeighted(5)}
 	})
 	return southwestSingleton
 }
 
 func (s *southwest) CleanUp() {
 	//Stop refreshing the token
-	close(s.quitTokenRefresh)
 }
 
 func (s *southwest) GetOneWayFlights(srcAirport, destAirport string, beginDate, endDate time.Time, numPassengers int, c chan []*models.OneWayFlight) {
@@ -77,7 +60,7 @@ func (s *southwest) GetOneWayFlights(srcAirport, destAirport string, beginDate, 
 				func() error {
 					s.sem.Acquire(context.TODO(), 1)
 					refreshAuthHeaders()
-					fmt.Printf("Trying to get for date %s", beginDateStr)
+					fmt.Printf("Trying to get flight data for date %s", beginDateStr)
 					flights, err = getFlightJsonFromAPI(srcAirport, destAirport, beginDateStr, beginDateStr, numPassengers, false)
 					s.sem.Release(1)
 					if err != nil {
@@ -90,16 +73,6 @@ func (s *southwest) GetOneWayFlights(srcAirport, destAirport string, beginDate, 
 				retry.Attempts(5),
 				retry.Delay(time.Minute))
 
-			//if err != nil {
-			//	log.Println(err)
-			//	time.Sleep(time.Minute)
-			//	s.sem.Release(1)
-			//	flights, err = getFlightJsonFromAPI(srcAirport, destAirport, beginDateStr, beginDateStr, numPassengers, false)
-			//	return
-			//} else {
-			//	fmt.Println("SUCCESS!!!")
-			//	s.sem.Release(1)
-			//}
 			fmt.Printf("Southwest: %s - %s Finished Querying from %s to %s \n", srcAirport, destAirport, beginDateStr, beginDateStr)
 			c <- processFlights(flights, beginDateStr)
 		}()
@@ -110,10 +83,6 @@ func (s *southwest) GetOneWayFlights(srcAirport, destAirport string, beginDate, 
 }
 
 func processFlights(flightsMap []interface{}, date string) []*models.OneWayFlight {
-	//trips is an array with two items in it -> item #1 contains all flight information from srcAirport to destAirport and item #2 contains all flight information from destAirport to srcAirport
-
-	//srcAiport := flightsMap.(map[string]interface{})["origin"].(string)
-	//destAirport := srcTrip.(map[string]interface{})["destination"].(string)
 
 	var flights []*models.OneWayFlight
 

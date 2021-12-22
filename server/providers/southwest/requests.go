@@ -17,7 +17,6 @@ func refreshAuthHeaders()  {
 	}
 	resp, err := client.GetSouthwestHeaders(context.Background(), &req)
 
-	//fmt.Println(resp.Headers)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -48,13 +47,7 @@ func oneWayFlightRequest(srcAirport, destAirport, departureDate string, numPasse
 	req.Header.Set("X-User-Experience-ID", headers["X-User-Experience-ID"])
 	req.Header.Set("User-Agent", headers["User-Agent"])
 
-	//for k, v := range config2.ApiInfo.Headers {
-	//	fmt.Printf("%s: %s\n", k, v)
-	//	req.Header.Set(k, v)
-	//}
-
-
-	defer ApiInfo.RUnlock()
+	ApiInfo.RUnlock()
 
 	q := req.URL.Query()
 	q.Add("origination-airport", srcAirport)
@@ -63,7 +56,6 @@ func oneWayFlightRequest(srcAirport, destAirport, departureDate string, numPasse
 	q.Add("number-adult-passengers", strconv.FormatInt(int64(numPassengers), 10))
 	q.Add("currency", "USD")
 
-	fmt.Println(q.Get("number-adult-passengers"))
 	req.URL.RawQuery = q.Encode()
 
 	return req
