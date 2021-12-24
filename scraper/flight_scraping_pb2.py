@@ -17,9 +17,9 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='flight_scraping.proto',
   package='flights',
   syntax='proto3',
-  serialized_options=b'Z8github.com/gabriel-flynn/Cheap-Flight-Finder/server/grpc',
+  serialized_options=b'Z\013server/grpc',
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x15\x66light_scraping.proto\x12\x07\x66lights\"\x07\n\x05\x45mpty\"\x8b\x01\n\x18SouthwestHeadersResponse\x12?\n\x07headers\x18\x01 \x03(\x0b\x32..flights.SouthwestHeadersResponse.HeadersEntry\x1a.\n\x0cHeadersEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t:\x02\x38\x01\x32[\n\rFlightScraper\x12J\n\x13GetSouthwestHeaders\x12\x0e.flights.Empty\x1a!.flights.SouthwestHeadersResponse\"\x00\x42:Z8github.com/gabriel-flynn/Cheap-Flight-Finder/server/grpcb\x06proto3'
+  serialized_pb=b'\n\x15\x66light_scraping.proto\x12\x07\x66lights\"\x07\n\x05\x45mpty\"\x8b\x01\n\x18SouthwestHeadersResponse\x12?\n\x07headers\x18\x01 \x03(\x0b\x32..flights.SouthwestHeadersResponse.HeadersEntry\x1a.\n\x0cHeadersEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t:\x02\x38\x01\" \n\x11PageSourceRequest\x12\x0b\n\x03url\x18\x01 \x01(\t\"(\n\x12PageSourceResponse\x12\x12\n\npageSource\x18\x01 \x01(\t2\xa7\x01\n\rFlightScraper\x12J\n\x13GetSouthwestHeaders\x12\x0e.flights.Empty\x1a!.flights.SouthwestHeadersResponse\"\x00\x12J\n\rGetPageSource\x12\x1a.flights.PageSourceRequest\x1a\x1b.flights.PageSourceResponse\"\x00\x42\rZ\x0bserver/grpcb\x06proto3'
 )
 
 
@@ -119,10 +119,76 @@ _SOUTHWESTHEADERSRESPONSE = _descriptor.Descriptor(
   serialized_end=183,
 )
 
+
+_PAGESOURCEREQUEST = _descriptor.Descriptor(
+  name='PageSourceRequest',
+  full_name='flights.PageSourceRequest',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='url', full_name='flights.PageSourceRequest.url', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=185,
+  serialized_end=217,
+)
+
+
+_PAGESOURCERESPONSE = _descriptor.Descriptor(
+  name='PageSourceResponse',
+  full_name='flights.PageSourceResponse',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='pageSource', full_name='flights.PageSourceResponse.pageSource', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=219,
+  serialized_end=259,
+)
+
 _SOUTHWESTHEADERSRESPONSE_HEADERSENTRY.containing_type = _SOUTHWESTHEADERSRESPONSE
 _SOUTHWESTHEADERSRESPONSE.fields_by_name['headers'].message_type = _SOUTHWESTHEADERSRESPONSE_HEADERSENTRY
 DESCRIPTOR.message_types_by_name['Empty'] = _EMPTY
 DESCRIPTOR.message_types_by_name['SouthwestHeadersResponse'] = _SOUTHWESTHEADERSRESPONSE
+DESCRIPTOR.message_types_by_name['PageSourceRequest'] = _PAGESOURCEREQUEST
+DESCRIPTOR.message_types_by_name['PageSourceResponse'] = _PAGESOURCERESPONSE
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 Empty = _reflection.GeneratedProtocolMessageType('Empty', (_message.Message,), {
@@ -147,6 +213,20 @@ SouthwestHeadersResponse = _reflection.GeneratedProtocolMessageType('SouthwestHe
 _sym_db.RegisterMessage(SouthwestHeadersResponse)
 _sym_db.RegisterMessage(SouthwestHeadersResponse.HeadersEntry)
 
+PageSourceRequest = _reflection.GeneratedProtocolMessageType('PageSourceRequest', (_message.Message,), {
+  'DESCRIPTOR' : _PAGESOURCEREQUEST,
+  '__module__' : 'flight_scraping_pb2'
+  # @@protoc_insertion_point(class_scope:flights.PageSourceRequest)
+  })
+_sym_db.RegisterMessage(PageSourceRequest)
+
+PageSourceResponse = _reflection.GeneratedProtocolMessageType('PageSourceResponse', (_message.Message,), {
+  'DESCRIPTOR' : _PAGESOURCERESPONSE,
+  '__module__' : 'flight_scraping_pb2'
+  # @@protoc_insertion_point(class_scope:flights.PageSourceResponse)
+  })
+_sym_db.RegisterMessage(PageSourceResponse)
+
 
 DESCRIPTOR._options = None
 _SOUTHWESTHEADERSRESPONSE_HEADERSENTRY._options = None
@@ -158,8 +238,8 @@ _FLIGHTSCRAPER = _descriptor.ServiceDescriptor(
   index=0,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=185,
-  serialized_end=276,
+  serialized_start=262,
+  serialized_end=429,
   methods=[
   _descriptor.MethodDescriptor(
     name='GetSouthwestHeaders',
@@ -168,6 +248,16 @@ _FLIGHTSCRAPER = _descriptor.ServiceDescriptor(
     containing_service=None,
     input_type=_EMPTY,
     output_type=_SOUTHWESTHEADERSRESPONSE,
+    serialized_options=None,
+    create_key=_descriptor._internal_create_key,
+  ),
+  _descriptor.MethodDescriptor(
+    name='GetPageSource',
+    full_name='flights.FlightScraper.GetPageSource',
+    index=1,
+    containing_service=None,
+    input_type=_PAGESOURCEREQUEST,
+    output_type=_PAGESOURCERESPONSE,
     serialized_options=None,
     create_key=_descriptor._internal_create_key,
   ),

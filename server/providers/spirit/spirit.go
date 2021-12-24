@@ -1,10 +1,14 @@
 package spirit
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/gabriel-flynn/Cheap-Flight-Finder/server/models"
+	"github.com/gabriel-flynn/Cheap-Flight-Finder/server/providers"
 	"go.uber.org/ratelimit"
+	"io"
 	"log"
+	"net/http"
 	"strings"
 	"sync"
 	"time"
@@ -16,6 +20,9 @@ type spirit struct {
 }
 
 var spiritSingleton *spirit
+var _ providers.FlightProvider = &spirit{} //Compile-time check that the interface is implemented
+
+var routes map[string]map[string]bool
 
 var doOnce sync.Once
 
@@ -44,6 +51,49 @@ func GetSpiritProvider() *spirit {
 
 	})
 	return spiritSingleton
+}
+
+func (s *spirit) IsAvailableRoute(srcAirport, destAirport string) bool {
+	if routes == nil {
+		client := &http.Client{}
+		res, err := client.Do(getRoutesRequest())
+		if err != nil {
+			log.Fatal("Unable to successfully get Frontier routes", err)
+		}
+
+		defer res.Body.Close()
+		if res.StatusCode == http.StatusOK {
+			bodyBytes, err := io.ReadAll(res.Body)
+			if err != nil {
+				log.Fatal("Unable to successfully get Frontier routes body", err)
+			}
+
+			var data map[string]interface{}
+			err = json.Unmarshal(bodyBytes, &data)
+			if err != nil {
+				log.Fatal("Unable to successfully unmarshal Frontier routes JSON", err)
+			}
+
+			routes = make(map[string]map[string]bool)
+			for _, route := range data["data"].([]interface{}) {
+				key := route.(map[string]interface{})["stationCode"].(string)
+				destinations := route.(map[string]interface{})["markets"].([]interface{})
+				set := make(map[string]bool)
+				for _, dest := range destinations {
+					set[dest.(string)] = true
+				}
+				routes[key] = set
+			}
+		}
+	}
+
+	if val, ok := routes[srcAirport]; ok {
+		if _, ok := val[destAirport]; ok {
+			return true
+		}
+	}
+
+	return false
 }
 
 func (s *spirit) CleanUp() {
@@ -145,7 +195,7 @@ func processFlights(trips []interface{}, numPassengers int) []*models.OneWayFlig
 		}
 
 		flights = append(flights, &models.OneWayFlight{
-			FlightKey: 		flight.(map[string]interface{})["journeyKey"].(string),
+			FlightKey:       flight.(map[string]interface{})["journeyKey"].(string),
 			Airline:         "spirit",
 			SrcAirport:      srcAiport,
 			DestAirport:     destAirport,

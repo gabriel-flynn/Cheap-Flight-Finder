@@ -11,4 +11,3 @@ var ApiInfo = &ApiConfig{
 	RWMutex: sync.RWMutex{},
 	Headers: nil,
 }
-

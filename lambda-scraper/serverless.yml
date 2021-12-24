@@ -1,0 +1,17 @@
+service: lambda
+
+provider:
+  name: aws
+  stage: ${opt:stage, 'prod'}
+  region: ${env:AWS_REGION, 'us-east-1'}
+  ecr:
+    images:
+      img:
+        path: ./
+
+functions:
+  scrape-frontier:
+    timeout: 60
+    memorySize: 1024
+    image:
+      name: img

@@ -1,4 +1,4 @@
-package database
+package datastore
 
 import (
 	"fmt"
@@ -11,7 +11,10 @@ import (
 	"sync"
 )
 
-var DDBClient *dynamodb.DynamoDB
+var (
+	DDBClient *dynamodb.DynamoDB
+	sess      *session.Session
+)
 
 func SaveOneWayFlight(flight *models.OneWayFlight) {
 	av, err := dynamodbattribute.MarshalMap(flight)
@@ -29,9 +32,9 @@ func SaveOneWayFlight(flight *models.OneWayFlight) {
 
 func SaveOneWayFlightBatch(flights []*models.OneWayFlight) {
 	var wg sync.WaitGroup
-	for i := 0; i < len(flights); i+=25 {
+	for i := 0; i < len(flights); i += 25 {
 		wg.Add(1)
-		rightBound := i+25
+		rightBound := i + 25
 		if rightBound > len(flights) {
 			rightBound = len(flights)
 		}

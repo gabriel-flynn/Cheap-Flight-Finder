@@ -15,8 +15,8 @@ import (
 )
 
 type southwest struct {
-	rl               ratelimit.Limiter
-	sem              *semaphore.Weighted
+	rl  ratelimit.Limiter
+	sem *semaphore.Weighted
 }
 
 var southwestSingleton *southwest

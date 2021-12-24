@@ -33,6 +33,14 @@ func generateTokenRequest() *http.Request {
 	return req
 }
 
+func getRoutesRequest() *http.Request {
+	req, _ := http.NewRequest("GET", RoutesUrl, nil)
+	req.Header.Set("User-Agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.93 Safari/537.36")
+	req.Header.Set("ocp-apim-subscription-key", "dc6844776fe84b1c8b68affe7deb7916")
+
+	return req
+}
+
 func flightRequest(srcAirport, destAirport, startDate, endDate string, numPassengers int, roundTripFlight bool) *http.Request {
 	s := NewSearchModel(srcAirport, destAirport, startDate, endDate, numPassengers, roundTripFlight)
 

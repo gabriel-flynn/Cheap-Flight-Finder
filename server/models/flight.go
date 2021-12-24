@@ -19,7 +19,7 @@ type OneWayFlight struct {
 
 func (f *OneWayFlight) String() string {
 	return fmt.Sprintf("Flight[FlightKey: %s, Airline: %s, SrcAiport: %s, DestAirport: %s, FareKey: %s, FarePrice: %f, FlightDeparture: %s, FlightArrival: %s, FlightDuration: %s]",
-		f.FlightKey, f.Airline, f.SrcAirport, f.DestAirport,f .FareKey, f.FarePrice, f.FlightDeparture, f.FlightArrival, f.FlightDuration)
+		f.FlightKey, f.Airline, f.SrcAirport, f.DestAirport, f.FareKey, f.FarePrice, f.FlightDeparture, f.FlightArrival, f.FlightDuration)
 }
 
 func (f *OneWayFlight) GetOneWayFlightRecord() []string {

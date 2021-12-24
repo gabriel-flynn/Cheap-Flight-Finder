@@ -22,3 +22,6 @@ venv
 
 # Used by undetected-chrome
 tmp
+
+#serverless
+.serverless/

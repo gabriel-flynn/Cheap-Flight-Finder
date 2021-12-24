@@ -5,17 +5,19 @@ import (
 	"fmt"
 	"github.com/gabriel-flynn/Cheap-Flight-Finder/server/config"
 	"github.com/gabriel-flynn/Cheap-Flight-Finder/server/coordinator"
-	database "github.com/gabriel-flynn/Cheap-Flight-Finder/server/datastore"
+	"github.com/gabriel-flynn/Cheap-Flight-Finder/server/datastore"
 	"github.com/gabriel-flynn/Cheap-Flight-Finder/server/models"
 	"log"
 	"os"
 	"sync"
+	"time"
 )
 
 func main() {
 	flightConfig := config.LoadConfiguration("config.json")
 	c := make(chan []*models.OneWayFlight)
 
+	t := time.Now()
 	//Start querying endpoints for flights
 	go coordinator.NewFlightProviderCoordinator(c).Start()
 
@@ -44,7 +46,7 @@ func main() {
 				flightsCopy := make([]*models.OneWayFlight, len(flights))
 				copy(flightsCopy, flights)
 				go func() {
-					database.SaveOneWayFlightBatch(flightsCopy)
+					datastore.SaveOneWayFlightBatch(flightsCopy)
 					wg.Done()
 				}()
 			}
@@ -61,7 +63,7 @@ func main() {
 			copySlice := make([]*models.OneWayFlight, len(flights))
 			copy(copySlice, flights)
 			go func() {
-				database.SaveOneWayFlightBatch(copySlice)
+				datastore.SaveOneWayFlightBatch(copySlice)
 				wg.Done()
 			}()
 			if err != nil {
@@ -71,6 +73,8 @@ func main() {
 		flights = []*models.OneWayFlight{}
 	}
 	file.Close()
+
+	fmt.Println(time.Since(t))
 	if flightConfig.SaveToDynamo {
 		fmt.Print("Waiting for flights to save to DynamoDB")
 	}

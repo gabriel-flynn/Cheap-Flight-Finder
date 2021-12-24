@@ -19,12 +19,23 @@ class FlightScraperStub(object):
                 request_serializer=flight__scraping__pb2.Empty.SerializeToString,
                 response_deserializer=flight__scraping__pb2.SouthwestHeadersResponse.FromString,
                 )
+        self.GetPageSource = channel.unary_unary(
+                '/flights.FlightScraper/GetPageSource',
+                request_serializer=flight__scraping__pb2.PageSourceRequest.SerializeToString,
+                response_deserializer=flight__scraping__pb2.PageSourceResponse.FromString,
+                )
 
 
 class FlightScraperServicer(object):
     """Missing associated documentation comment in .proto file."""
 
     def GetSouthwestHeaders(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetPageSource(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -37,6 +48,11 @@ def add_FlightScraperServicer_to_server(servicer, server):
                     servicer.GetSouthwestHeaders,
                     request_deserializer=flight__scraping__pb2.Empty.FromString,
                     response_serializer=flight__scraping__pb2.SouthwestHeadersResponse.SerializeToString,
+            ),
+            'GetPageSource': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetPageSource,
+                    request_deserializer=flight__scraping__pb2.PageSourceRequest.FromString,
+                    response_serializer=flight__scraping__pb2.PageSourceResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -62,5 +78,22 @@ class FlightScraper(object):
         return grpc.experimental.unary_unary(request, target, '/flights.FlightScraper/GetSouthwestHeaders',
             flight__scraping__pb2.Empty.SerializeToString,
             flight__scraping__pb2.SouthwestHeadersResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def GetPageSource(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/flights.FlightScraper/GetPageSource',
+            flight__scraping__pb2.PageSourceRequest.SerializeToString,
+            flight__scraping__pb2.PageSourceResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

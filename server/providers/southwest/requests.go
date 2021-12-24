@@ -3,18 +3,17 @@ package southwest
 import (
 	"context"
 	"fmt"
-	pb "github.com/gabriel-flynn/Cheap-Flight-Finder/server/grpc"
+	"github.com/gabriel-flynn/Cheap-Flight-Finder/server/rpc"
 	"log"
 	"net/http"
 	"strconv"
 )
 
-func refreshAuthHeaders()  {
+func refreshAuthHeaders() {
 	fmt.Println("REFRESHING AUTH HEADERS!!!")
-	client := pb.GetClient()
+	client := rpc.GetClient()
 
-	req := pb.Empty{
-	}
+	req := rpc.Empty{}
 	resp, err := client.GetSouthwestHeaders(context.Background(), &req)
 
 	if err != nil {
@@ -24,7 +23,6 @@ func refreshAuthHeaders()  {
 	ApiInfo.Headers = resp.Headers
 	ApiInfo.Unlock()
 }
-
 
 func oneWayFlightRequest(srcAirport, destAirport, departureDate string, numPassengers int, roundTripFlight bool) *http.Request {
 

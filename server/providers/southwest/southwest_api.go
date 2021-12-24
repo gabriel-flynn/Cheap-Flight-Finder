@@ -29,7 +29,6 @@ func getFlightJsonFromAPI(srcAirport, destAirport, startDate, endDate string, nu
 			log.Fatal(err)
 		}
 
-
 		var x map[string]interface{}
 		err = json.Unmarshal(bodyBytes, &x)
 		if err != nil {
@@ -38,7 +37,6 @@ func getFlightJsonFromAPI(srcAirport, destAirport, startDate, endDate string, nu
 
 		return x["flightShoppingPage"].(map[string]interface{})["outboundPage"].(map[string]interface{})["cards"].([]interface{}), nil
 	}
-
 
 	bodyBufr, err := ioutil.ReadAll(res.Body)
 	if err != nil {

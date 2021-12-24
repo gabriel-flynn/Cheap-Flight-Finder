@@ -4,8 +4,9 @@ import time
 from concurrent.futures import ThreadPoolExecutor
 import grpc
 from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
 
-from flight_scraping_pb2 import SouthwestHeadersResponse
+from flight_scraping_pb2 import SouthwestHeadersResponse, PageSourceResponse
 from flight_scraping_pb2_grpc import FlightScraperServicer, add_FlightScraperServicer_to_server
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -45,7 +46,8 @@ def goToSouthwestWebsite():
     try:
         element_present = EC.presence_of_element_located((By.CLASS_NAME, "form-field--placeholder"))
         WebDriverWait(driver, 60)
-        driver.execute_cdp_cmd('Network.setUserAgentOverride', {"userAgent":"Mozilla/5.0 (Linux; Android 12) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.104 Mobile Safari/537.36"})
+        driver.execute_cdp_cmd('Network.setUserAgentOverride', {
+            "userAgent": "Mozilla/5.0 (Linux; Android 12) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.104 Mobile Safari/537.36"})
         action = webdriver.ActionChains(driver)
 
         from_btn = driver.find_element(By.CLASS_NAME, 'form-field--placeholder')
@@ -88,6 +90,19 @@ class FlightScrapingServer(FlightScraperServicer):
         goToSouthwestWebsite()
         sem.release()
         resp = SouthwestHeadersResponse(headers=headers)
+        return resp
+
+    def GetPageSource(self, request, context):
+        options = Options()
+        options.headless = True
+        driver = webdriver.Chrome(options=options)
+        print(request.url)
+        try:
+            driver.get(request.url)
+        except Exception as e:
+            print(f"Encountered error on url {request.url}: {e}")
+
+        resp = PageSourceResponse(pageSource=driver.page_source)
         return resp
 
 

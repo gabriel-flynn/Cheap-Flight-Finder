@@ -1,4 +1,6 @@
 selenium
 selenium-wire
 xvfbwrapper
+grpcio
 grpcio-tools
+grpclib

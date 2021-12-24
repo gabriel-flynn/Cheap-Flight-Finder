@@ -1,11 +1,10 @@
-package grpc
+package rpc
 
 import (
 	"google.golang.org/grpc"
 	"log"
 	"sync"
 )
-
 
 var client FlightScraperClient
 

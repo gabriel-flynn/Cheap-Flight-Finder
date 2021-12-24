@@ -9,7 +9,7 @@ import (
 
 type Config struct {
 	FlightParameters []FlightSearch
-	SaveToDynamo bool
+	SaveToDynamo     bool
 }
 
 type FlightSearch struct {
@@ -22,7 +22,7 @@ type FlightSearch struct {
 
 type configDTO struct {
 	FlightParameters []flightSearchDTO `json:"flights"`
-	SaveToDynamo bool `json:"saveToDynamo"`
+	SaveToDynamo     bool              `json:"saveToDynamo"`
 }
 
 type flightSearchDTO struct {

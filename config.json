@@ -1,7 +1,7 @@
 {
   "flights": [
     {
-      "srcAirport": "DAL",
+      "srcAirport": "DFW",
       "destAirport": "LAS",
       "numPassengers": 2,
       "startWindow": "P1D",
