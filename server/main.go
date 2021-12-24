@@ -72,9 +72,14 @@ func main() {
 		}
 		flights = []*models.OneWayFlight{}
 	}
-	file.Close()
-
 	fmt.Println(time.Since(t))
+
+	err = datastore.SaveFileToBucket(file)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	file.Close()
 	if flightConfig.SaveToDynamo {
 		fmt.Print("Waiting for flights to save to DynamoDB")
 	}

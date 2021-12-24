@@ -2,8 +2,8 @@ package rpc
 
 import (
 	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/lambda"
+	aws2 "github.com/gabriel-flynn/Cheap-Flight-Finder/server/aws"
 	"log"
 )
 
@@ -20,12 +20,6 @@ func GetPageSourceLambda(payload []byte) string {
 }
 
 func init() {
-	sess := session.Must(session.NewSessionWithOptions(session.Options{
-		Config: aws.Config{
-			Region: aws.String("us-east-1"),
-		},
-		SharedConfigState: session.SharedConfigEnable,
-	}))
 
-	lambdaClient = lambda.New(sess, &aws.Config{Region: aws.String("us-east-1")})
+	lambdaClient = lambda.New(aws2.GetSession(), &aws.Config{Region: aws.String("us-east-1")})
 }

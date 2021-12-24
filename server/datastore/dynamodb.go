@@ -3,9 +3,9 @@ package datastore
 import (
 	"fmt"
 	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
+	aws2 "github.com/gabriel-flynn/Cheap-Flight-Finder/server/aws"
 	"github.com/gabriel-flynn/Cheap-Flight-Finder/server/models"
 	"log"
 	"sync"
@@ -13,7 +13,6 @@ import (
 
 var (
 	DDBClient *dynamodb.DynamoDB
-	sess      *session.Session
 )
 
 func SaveOneWayFlight(flight *models.OneWayFlight) {
@@ -76,13 +75,5 @@ func saveOneWayFlightBatch(flights []*models.OneWayFlight) {
 }
 
 func init() {
-
-	sess := session.Must(session.NewSessionWithOptions(session.Options{
-		Config: aws.Config{
-			Region: aws.String("us-east-1"),
-		},
-		SharedConfigState: session.SharedConfigEnable,
-	}))
-
-	DDBClient = dynamodb.New(sess)
+	DDBClient = dynamodb.New(aws2.GetSession())
 }
