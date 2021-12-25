@@ -4,3 +4,9 @@ xvfbwrapper
 grpcio
 grpcio-tools
 grpclib
+pyspark
+
+
+numpy
+pandas
+matplotlib
